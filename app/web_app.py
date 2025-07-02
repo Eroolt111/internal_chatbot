@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 import logging
 import os
-from .pipeline import ChatbotPipeline # Make sure pipeline is correctly imported
+from .pipeline import ChatbotPipeline 
 from .config import config
 import re
-import threading # Import threading
+import threading
 
 # Configure logging
 logging.basicConfig(level=config.LOG_LEVEL)
@@ -31,7 +31,6 @@ def initialize_pipeline():
             pipeline_instance = None
             return False
 
-# Initialize pipeline on startup
 initialize_pipeline()
 
 
@@ -43,7 +42,7 @@ def index():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages from the frontend"""
-    global pipeline_instance # Ensure you refer to the global instance
+    global pipeline_instance 
     if not pipeline_instance:
         return jsonify({
             'error': 'Chatbot pipeline not initialized',
