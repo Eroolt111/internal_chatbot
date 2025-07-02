@@ -54,7 +54,7 @@ SQL: {sql_query}
 SQL Response: {context_str}
 Response: """
 
-# Enhanced Text-to-SQL Prompt with better multi-column guidance 
+# Text-to-SQL Prompt 
 MONGOLIAN_TEXT_TO_SQL_PROMPT = """
 Given an input question in Mongolian or English, create a syntactically correct {dialect} query to run.
 
