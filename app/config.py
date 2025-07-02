@@ -56,7 +56,6 @@ class Config:
     MAX_ROWS_PER_TABLE: int = int(os.getenv("MAX_ROWS_PER_TABLE", "500"))
     
     def __init__(self):
-        # ensure these directories exist
         Path(self.TABLE_INFO_DIR).mkdir(exist_ok=True)
         Path(self.TABLE_INDEX_DIR).mkdir(exist_ok=True)
     
