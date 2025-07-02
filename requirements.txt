@@ -1,0 +1,32 @@
+llama-index-llms-ollama>=0.1.0
+llama-index-embeddings-ollama>=0.1.0
+llama-index-core>=0.10.0
+llama-index>=0.10.0
+llama_index.embeddings.openai
+llama_index.llms.openai
+
+# Database
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# API framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Config
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+pathlib>=1.0.0
+typing-extensions>=4.8.0
+
+schedule>=1.2.0 
+
+#API
+Flask==2.3.2
+Werkzeug==2.3.6
+gunicorn==21.2.0
