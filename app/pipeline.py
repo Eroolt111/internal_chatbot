@@ -144,7 +144,7 @@ class ChatbotPipeline:
         try:
             idx_path = Path(config.TABLE_INDEX_DIR) / table_name
             with db_manager.get_connection() as conn:
-                # Fetch all rows, not just a subset
+                # Fetch all rows
                 result = conn.execute(text(f'SELECT * FROM "{table_name}"'))
                 rows = result.mappings().all()
                 total_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table_name}"')).scalar()
@@ -158,13 +158,13 @@ class ChatbotPipeline:
                     """
                 ), {"tbl": table_name}).fetchall()
             id_col = cols[0][0] if cols else None
-            # Build vector nodes for all rows
+            # Build vector nodes for rows
             nodes = [Document(text=str(r)) for r in rows]
             idx = VectorStoreIndex(nodes)
             idx.set_index_id("vector_index")
             idx.storage_context.persist(str(idx_path))
 
-            # Update tracker to reflect entire table
+            # Update tracker to reflect table
             last_id = max(r[id_col] for r in rows) if id_col and rows else None
             self.index_tracker.update_last_indexed(
                 table_name,
@@ -271,14 +271,14 @@ class ChatbotPipeline:
                     self._create_full_table_index(tbl)
         logger.info(f"Created vector indices for {len(self.vector_index_dict)} tables")
 
-    # _debug_sql_results function added as a class method ---
+    # debug
     def _debug_sql_results(self, sql_results) -> str:
         print(f"\n--- DEBUG: RAW SQL RESULTS (FROM DATABASE) ---\n{sql_results}\n--- END DEBUG ---\n")
         return sql_results 
 
     def _log_sql_query(self, sql_query: str) -> str:
         """Log the raw SQL before execution."""
-        # print for debug output ---
+        # print for debug
         print(f"\n--- DEBUG: GENERATED SQL QUERY ---\n{sql_query}\n--- END DEBUG ---\n")
         logger.debug(f"→ running SQL:\n{sql_query}")
         return sql_query
@@ -289,12 +289,12 @@ class ChatbotPipeline:
         markdown fences, any "assistant:" prefix, markers like SQLQuery/SQLResult,
         and anything after the final semicolon (including trailing prose or "Answer:").
         """
-        #  print for debug output ---
+        #  print for debug
         print(f"\n--- DEBUG: LLM Response BEFORE SQL Parsing ---\n{response.message.content.strip()}\n--- END DEBUG ---\n")
         
         txt = response.message.content.strip()
 
-        # Drop leading "assistant:" if present
+        # Drop leading "assistant:"
         if txt.lower().startswith("assistant:"):
             txt = txt[len("assistant:"):].strip()
 
@@ -310,7 +310,7 @@ class ChatbotPipeline:
         txt = re.sub(r"(?i)sqlquery:.*", "", txt)
         txt = re.sub(r"(?i)sqlresult:.*", "", txt)
 
-        # Truncate at the last semicolon (keep the semicolon)
+        # Truncate at the last semicolon
         if ";" in txt:
             txt = txt[: txt.rfind(";") + 1]
 
@@ -320,7 +320,7 @@ class ChatbotPipeline:
         # Finally drop any leading dialect label (sql:, postgresql:)
         txt = re.sub(r"^(?:sql|postgresql)[:\s]*", "", txt, flags=re.IGNORECASE).strip()
 
-        # print for debug output ---
+        # print for debug
         print(f"\n--- DEBUG: PARSED SQL (After Cleaning) ---\n{txt}\n--- END DEBUG ---\n")
         return txt
 
@@ -488,10 +488,8 @@ class ChatbotPipeline:
                     self.vector_index_dict[table_name] = idx
                 
                     # Count documents (approximate)
-                    # Note: LlamaIndex doesn't have a direct doc count method
-                    # This is an approximation
                     try:
-                        # Try to get some measure of index size
+                        #get some measure of index size
                         retriever = idx.as_retriever(similarity_top_k=1)
                         test_nodes = retriever.retrieve("test")
                         refreshed_counts[table_name] = "refreshed"
